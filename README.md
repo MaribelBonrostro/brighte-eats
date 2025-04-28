@@ -52,6 +52,8 @@ DATABASE_URL=postgresql://username:password@localhost:5432/your_database
 PORT=4000
 ```
 
+
+
 ### 2. Install Dependencies
 
 Run the following command to install the required dependencies:
@@ -68,6 +70,12 @@ Use the following command to start the services:
 docker-compose up
 ```
 
+use this command to create the schema
+
+```bash
+docker-compose exec app npm run init-db
+```
+
 ### 4. Stop the Services
 
 To stop the services, use:
@@ -80,6 +88,7 @@ docker-compose down
 # Example Queries
 
 ## Fetch All Leads with Services
+```graphql
 query {
   lead {
     leads {
@@ -92,10 +101,12 @@ query {
     }
   }
 }
+```
 
 
 
 ## Fetch a Single Lead by ID
+```graphql
 query {
   lead {
     lead(id: "id") {
@@ -108,9 +119,11 @@ query {
     }
   }
 }
+```
 
 
 ## Create a New Lead
+```graphql
 mutation {
   lead {
     create(input: {
@@ -129,3 +142,4 @@ mutation {
     }
   }
 }
+```
