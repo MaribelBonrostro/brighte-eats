@@ -1,4 +1,4 @@
-
+import { Service } from '../../graphql/resolvers/lead.types';
 import { LeadRepository } from './lead';
 
 jest.mock('drizzle-orm', () => ({
@@ -26,10 +26,10 @@ jest.mock('drizzle-orm/node-postgres', () => ({
     groupBy: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     execute: jest.fn(),
+    insert: jest.fn().mockReturnThis(),
+    values: jest.fn().mockReturnThis(),
   })),
 }));
-
-
 
 describe('LeadRepository', () => {
   let leadRepo: LeadRepository;
@@ -113,8 +113,61 @@ describe('LeadRepository', () => {
         email: 'johndoe@gmail.com',
         mobile: '09269747000',
         postcode: '3024',
-        services: ['delivery'],
+        services: [Service.Delivery],
       });
+    });
+  });
+  describe('createLeadWithServices', () => {
+    it('should create a lead and link services', async () => {
+      const fakeLead = {
+        name: 'John Doe',
+        email: 'john@example.com',
+        postcode: '12345',
+        mobile: '0412345678',
+        services: [Service.Delivery, Service.PickUp],
+      };
+
+      const insertedLead = [
+        {
+          id: 'lead-id-1',
+          name: fakeLead.name,
+          email: fakeLead.email,
+          mobile: fakeLead.mobile,
+          postcode: fakeLead.postcode,
+        },
+      ];
+
+      const serviceRecords = [
+        { id: 'service-id-1', name: Service.Delivery },
+        { id: 'service-id-2', name: Service.PickUp },
+      ];
+
+      jest.spyOn(leadRepo, 'insert').mockResolvedValueOnce(insertedLead);
+
+      mockDb.execute
+        .mockResolvedValueOnce(serviceRecords)
+        .mockResolvedValueOnce([]);
+
+      const result = await leadRepo.createLeadWithServices(fakeLead);
+
+      expect(result).toEqual({
+        id: 'lead-id-1',
+        name: fakeLead.name,
+        email: fakeLead.email,
+        mobile: fakeLead.mobile,
+        postcode: fakeLead.postcode,
+        services: [Service.Delivery, Service.PickUp],
+      });
+
+      expect(leadRepo.insert).toHaveBeenCalledWith({
+        name: fakeLead.name,
+        email: fakeLead.email,
+        mobile: fakeLead.mobile,
+        postcode: fakeLead.postcode,
+      });
+
+      expect(mockDb.select).toHaveBeenCalled();
+      expect(mockDb.insert).toHaveBeenCalled();
     });
   });
 });
