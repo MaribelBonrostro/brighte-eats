@@ -1,0 +1,54 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:16
+    restart: on-failure
+    environment:
+      POSTGRES_USER: maribel
+      POSTGRES_PASSWORD: brighte
+      POSTGRES_DB: brighte
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
+    environment:
+      # NODE_ENV: production
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: maribel
+      POSTGRES_PASSWORD: brighte
+      POSTGRES_DB: brighte
+      DATABASE_URL: postgresql://maribel:brighte@db:5432/brighte
+      RUN_MIGRATIONS: 'true'
+      PORT: 4000
+    ports:
+      - '4000:4000'
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: >
+      sh -c 'npm install && npm run dev'
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: maribel.bonrostro@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: brighte
+    ports:
+      - '8080:80'
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+    driver: local

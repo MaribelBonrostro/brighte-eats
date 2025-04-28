@@ -1,0 +1,55 @@
+{
+  "name": "brighte-graphql",
+  "version": "1.0.0",
+  "description": "Brighte Exercise",
+  "main": "index.js",
+  "scripts": {
+    "init-db": "node scripts/init-db.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true nodemon --ext js,ts server.ts",
+    "start": "ts-node -r dotenv/config  --transpile-only server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Innoleaps/matchmaker-api.git"
+  },
+  "author": "Maribel Bonrostro Centeno",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.5.0",
+    "@babel/cli": "^7.25.9",
+    "@babel/core": "^7.26.0",
+    "@babel/node": "^7.12.6",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-flow": "^7.12.1",
+    "@graphql-tools/schema": "^9.0.19",
+    "@graphql-tools/utils": "^9.2.1",
+    "@hubspot/api-client": "^12.0.1",
+    "apollo-server-core": "^3.13.0",
+    "axios": "^1.7.2",
+    "babel-preset-latest-node": "^5.0.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.43.0",
+    "express": "^5.1.0",
+    "graphql": "^16.10.0",
+    "graphql-tag": "^2.12.6",
+    "graphql-ws": "^5.14.0",
+    "pg": "^8.15.5",
+    "ts-node": "^10.9.2",
+    "ws": "^8.14.0"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.7.14",
+    "@swc/jest": "^0.2.36",
+    "@types/jest": "^29.5.12",
+    "@types/pg": "^8.11.14",
+    "@types/uuid": "^10.0.0",
+    "chai": "^4.3.7",
+    "drizzle-kit": "^0.31.0",
+    "jest": "^29.7.0",
+    "mocha": "^10.2.0",
+    "nodemon": "^2.0.22",
+    "typescript": "^5.5.4"
+  }
+}
