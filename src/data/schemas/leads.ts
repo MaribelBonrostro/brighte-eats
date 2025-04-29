@@ -1,5 +1,5 @@
 import { pgTable, uuid, text, timestamp } from 'drizzle-orm/pg-core';
-import { InferModel, sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 export const Leads = pgTable('leads', {
   id: uuid('id')
