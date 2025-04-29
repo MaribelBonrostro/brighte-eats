@@ -8,30 +8,31 @@
 ## Database Tables
 
 ### `leads` Table
-| Column      | Type    | Constraints                |
-|-------------|---------|--------------------------- |
-| `id`        | `uuid`  | Primary key, auto-generated |
-| `name`      | `text`  | Not null                   |
-| `email`     | `text`  | Not null, unique           |
-| `mobile`    | `text`  | Not null                   |
-| `postcode`  | `text`  | Not null                   |
-| `created_at`| `timestamp with time zone` | Default: `now()` |
+
+| Column       | Type                       | Constraints                 |
+| ------------ | -------------------------- | --------------------------- |
+| `id`         | `uuid`                     | Primary key, auto-generated |
+| `name`       | `text`                     | Not null                    |
+| `email`      | `text`                     | Not null, unique            |
+| `mobile`     | `text`                     | Not null                    |
+| `postcode`   | `text`                     | Not null                    |
+| `created_at` | `timestamp with time zone` | Default: `now()`            |
 
 ### `services` Table
-| Column      | Type          | Constraints                |
-|-------------|---------------|--------------------------- |
-| `id`        | `serial`      | Primary key                |
-| `name`      | `service_name`| Not null, enum (`delivery`, `pick_up`, `payment`) |
+
+| Column | Type           | Constraints                                       |
+| ------ | -------------- | ------------------------------------------------- |
+| `id`   | `serial`       | Primary key                                       |
+| `name` | `service_name` | Not null, enum (`delivery`, `pick_up`, `payment`) |
 
 ### `lead_services` Table
-| Column      | Type    | Constraints                |
-|-------------|---------|--------------------------- |
-| `lead_id`   | `uuid`  | Foreign key references `leads(id)` on delete cascade |
-| `service_id`| `integer` | Foreign key references `services(id)` on delete cascade |
+
+| Column       | Type      | Constraints                                             |
+| ------------ | --------- | ------------------------------------------------------- |
+| `lead_id`    | `uuid`    | Foreign key references `leads(id)` on delete cascade    |
+| `service_id` | `integer` | Foreign key references `services(id)` on delete cascade |
 
 ---
-
-
 
 # There are 3 services defined in this docker-compose file
 
@@ -51,8 +52,6 @@ Create a `.env` file in the root directory and add the following:
 DATABASE_URL=postgresql://username:password@localhost:5432/your_database
 PORT=4000
 ```
-
-
 
 ### 2. Install Dependencies
 
@@ -76,6 +75,16 @@ use this command to create the schema
 docker-compose exec app npm run init-db
 ```
 
+**Note:** In the meantime, you can manually add the services to the database using the following SQL query in your database query tool:
+
+```sql
+INSERT INTO "services" ("name")
+VALUES
+  ('pick_up'),
+  ('payment'),
+  ('delivery');
+```
+
 ### 4. Stop the Services
 
 To stop the services, use:
@@ -84,10 +93,10 @@ To stop the services, use:
 docker-compose down
 ```
 
-
 # Example Queries
 
 ## Fetch All Leads with Services
+
 ```graphql
 query {
   lead {
@@ -103,9 +112,8 @@ query {
 }
 ```
 
-
-
 ## Fetch a Single Lead by ID
+
 ```graphql
 query {
   lead {
@@ -121,18 +129,20 @@ query {
 }
 ```
 
-
 ## Create a New Lead
+
 ```graphql
 mutation {
   lead {
-    create(input: {
-      name: "Jane Doe",
-      email: "jane.doe@example.com",
-      mobile: "092791243",
-      postcode: "3024",
-      services: ["pick_up", "delivery"]
-    }) {
+    create(
+      input: {
+        name: "Jane Doe"
+        email: "jane.doe@example.com"
+        mobile: "092791243"
+        postcode: "3024"
+        services: ["pick_up", "delivery"]
+      }
+    ) {
       id
       name
       email
