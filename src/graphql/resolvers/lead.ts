@@ -7,7 +7,7 @@ export default {
       return context.repositories.lead.getAllLeadsWithServices();
     },
     async lead(parent: unknown, args: { id: string }, context: Context) {
-      return context.repositories.lead.getLeadWithServicesById(args.id);
+      return context.dataloaders.lead.load(args.id);
     },
   },
   Query: {

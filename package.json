@@ -6,12 +6,13 @@
   "scripts": {
     "init-db": "node scripts/init-db.js",
     "test": "jest",
+    "build": "mkdir -p dist && cp -r src/* dist/",
     "dev": "TS_NODE_FILES=true TS_NODE_TRANSPILE_ONLY=true nodemon --ext js,ts server.ts",
     "start": "ts-node -r dotenv/config  --transpile-only server.ts"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Innoleaps/matchmaker-api.git"
+    "url": "git+https://github.com/MaribelBonrostro/brighte-eats.git"
   },
   "author": "Maribel Bonrostro Centeno",
   "license": "ISC",
@@ -29,6 +30,7 @@
     "axios": "^1.7.2",
     "babel-preset-latest-node": "^5.0.0",
     "babel-preset-stage-0": "^6.24.1",
+    "dataloader": "^2.2.3",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.0",
     "express": "^5.1.0",
