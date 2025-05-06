@@ -4,7 +4,6 @@ import { json } from 'body-parser';
 import cors from 'cors';
 import { PORT } from '../env';
 import { contextFactory } from './context';
-import repositories from '../src/data/repositories';
 
 const INITIAL_MIDDLEWARES = [
   json(),
@@ -23,6 +22,17 @@ const INITIAL_MIDDLEWARES = [
     ],
   }),
 ];
+// const loggerMiddleware = (req, res, next) => {
+//   const operationType = req.body?.operationName || 'Unknown Operation';
+//   const operationKind = req.body?.query?.trim().startsWith('mutation')
+//     ? 'Mutation'
+//     : 'Query';
+
+//   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+//   console.log(`GraphQL Operation: ${operationType} (${operationKind})`);
+//   next();
+// };
+
 export class ExpressInitializer {
   constructor() {
     this.app = express();
@@ -38,8 +48,8 @@ export class ExpressInitializer {
       '/graphql',
       expressMiddleware(apolloServer, {
         context: async () => ({
-          ...await contextFactory(),
-        })
+          ...(await contextFactory()),
+        }),
       }),
     );
   }

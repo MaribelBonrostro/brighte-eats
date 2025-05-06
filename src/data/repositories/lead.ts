@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 import { LeadServices } from '../schemas/lead_services';
 import { Services } from '../schemas/services';
 import { eq, inArray, sql } from 'drizzle-orm';
-import { Lead } from '../../graphql/resolvers/lead.types';
+import { Lead, Service } from '../../graphql/resolvers/lead.types';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -68,13 +68,36 @@ export class LeadRepository extends BaseRepository<typeof Leads> {
   async getLeadWithServicesById(
     leadId: string,
   ): Promise<LeadWithServices | null> {
+    const result = await this.db
+      .select(this.getLeadServiceSelect())
+      .from(LeadServices)
+      .innerJoin(Leads, eq(LeadServices.leadId, Leads.id))
+      .innerJoin(Services, eq(LeadServices.serviceId, Services.id))
+      .where(eq(Leads.id, leadId))
+      .groupBy(Leads.id)
+      .execute();
+
+    console.log('Result:', result);
+    if (result.length === 0) {
+      return null;
+    }
+
+    const lead = result[0];
+    return {
+      ...lead,
+      services: this.processServicesField(lead.services as string),
+    };
+  }
+
+  async getLeadsByService(service: Service): Promise<LeadWithServices[]> {
+    console.log('Fetching leads by service:', service);
     try {
       const result = await this.db
         .select(this.getLeadServiceSelect())
         .from(LeadServices)
         .innerJoin(Leads, eq(LeadServices.leadId, Leads.id))
         .innerJoin(Services, eq(LeadServices.serviceId, Services.id))
-        .where(eq(Leads.id, leadId))
+        .where(eq(Services.name, service))
         .groupBy(
           Leads.id,
           Leads.name,
@@ -83,18 +106,16 @@ export class LeadRepository extends BaseRepository<typeof Leads> {
           Leads.postcode,
         )
         .execute();
-
       if (result.length === 0) {
-        return null;
+        return [];
       }
 
-      const lead = result[0];
-      return {
-        ...lead,
-        services: this.processServicesField(lead.services as string),
-      };
+      return result.map((row) => ({
+        ...row,
+        services: this.processServicesField(row.services as string),
+      }));
     } catch (error) {
-      console.error(`Error fetching lead service by ID (${leadId}):`, error);
+      console.error(`Error fetching leads by service (${service}):`, error);
       throw error;
     }
   }

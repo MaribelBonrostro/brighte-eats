@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 
 export default gql`
+  directive @uppercase on FIELD_DEFINITION
   enum Service {
     delivery
     pick_up
@@ -9,7 +10,7 @@ export default gql`
 
   type Lead {
     id: ID!
-    name: String
+    name: String @uppercase
     email: String
     postcode: String
     mobile: String
@@ -19,6 +20,7 @@ export default gql`
   type LeadQueries {
     leads: [Lead]
     lead(id: ID!): Lead
+    leadsByService(service: Service!): [Lead]
   }
 
   extend type Query {

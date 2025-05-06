@@ -1,5 +1,5 @@
 import { Context } from '../../types/context';
-import { Lead } from './lead.types';
+import { Lead, Service } from './lead.types';
 import { isValidEmail } from '../../utils';
 import { createGraphQLError } from '../helpers/errorUtil';
 
@@ -10,6 +10,13 @@ export default {
     },
     async lead(parent: unknown, args: { id: string }, context: Context) {
       return context.dataloaders.lead.load(args.id);
+    },
+    async leadsByService(
+      parent: unknown,
+      args: { service: Service },
+      context: Context,
+    ) {
+      return context.repositories.lead.getLeadsByService(args.service);
     },
   },
   Query: {
